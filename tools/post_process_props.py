@@ -28,7 +28,8 @@ PROP_VALUE_MAX = 91
 # Put the modifications that you need to make into the /system/build.prop into this
 # function. The prop object has get(name) and put(name,value) methods.
 def mangle_build_prop(prop):
-  pass
+  # Drop Model name prop that will be created on boot instead
+  prop.drop("ro.product.model")
 
 # Put the modifications that you need to make into the /default.prop into this
 # function. The prop object has get(name) and put(name,value) methods.
@@ -114,6 +115,12 @@ class PropFile:
   def delete(self, name):
     key = name + "="
     self.lines = [ line for line in self.lines if not line.startswith(key) ]
+
+  def drop(self, name):
+    key = name + "="
+    for i in range(0,len(self.lines)):
+      if self.lines[i].startswith(key):
+        self.lines[i] = ""
 
   def write(self, f):
     f.write("\n".join(self.lines))
