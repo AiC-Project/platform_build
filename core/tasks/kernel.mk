@@ -61,13 +61,11 @@ $(TARGET_OUT_INTERMEDIATES)/%.kmodule: $(INSTALLED_KERNEL_TARGET)
 	$(mk_kernel) M=$(abspath $@) modules
 
 $(KERNEL_MODULES_DEP): $(INSTALLED_KERNEL_TARGET) $(patsubst %,$(TARGET_OUT_INTERMEDIATES)/%.kmodule,$(TARGET_EXTRA_KERNEL_MODULES))
-	$(hide) rm -rf $(TARGET_OUT)/lib/modules
 	$(mk_kernel) INSTALL_MOD_PATH=$(abspath $(TARGET_OUT)) modules_install
 	+ $(hide) for kmod in $(TARGET_EXTRA_KERNEL_MODULES) ; do \
 	        echo Installing additional kernel module $${kmod} ; \
 	        $(subst +,,$(subst $(hide),,$(mk_kernel))) INSTALL_MOD_PATH=$(abspath $(TARGET_OUT)) M=$(abspath $(TARGET_OUT_INTERMEDIATES))/$${kmod}.kmodule modules_install ; \
 	done
-	$(hide) rm -f $(TARGET_OUT)/lib/modules/*/{build,source}
 endif
 
 $(BUILT_SYSTEMIMAGE): $(KERNEL_MODULES_DEP)
